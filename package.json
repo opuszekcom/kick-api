@@ -16,11 +16,11 @@
     "typescript",
     "webhooks"
   ],
-  "homepage": "https://github.com/opuszek/kick-api#readme",
-  "bugs": "https://github.com/opuszek/kick-api/issues",
+  "homepage": "https://github.com/opuszekcom/kick-api#readme",
+  "bugs": "https://github.com/opuszekcom/kick-api/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/opuszek/kick-api.git"
+    "url": "git+https://github.com/opuszekcom/kick-api.git"
   },
   "license": "MIT",
   "author": "Opuszek <contact@opuszek.com> (https://opuszek.com)",

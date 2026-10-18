@@ -1,7 +1,7 @@
 # @opuszek/kick-api
 
 [![npm](https://img.shields.io/npm/v/@opuszek/kick-api)](https://www.npmjs.com/package/@opuszek/kick-api)
-[![CI](https://github.com/opuszek/kick-api/actions/workflows/ci.yml/badge.svg)](https://github.com/opuszek/kick-api/actions/workflows/ci.yml)
+[![CI](https://github.com/opuszekcom/kick-api/actions/workflows/ci.yml/badge.svg)](https://github.com/opuszekcom/kick-api/actions/workflows/ci.yml)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@opuszek/kick-api)](https://bundlephobia.com/package/@opuszek/kick-api)
 [![license](https://img.shields.io/npm/l/@opuszek/kick-api)](LICENSE)
 
