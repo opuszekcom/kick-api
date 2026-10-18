@@ -60,12 +60,14 @@ function base64Url(bytes: Uint8Array): string {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+/** Generates a PKCE code verifier and its S256 challenge. Keep the verifier until the code exchange. */
 export async function createPkce(): Promise<Pkce> {
   const codeVerifier = base64Url(crypto.getRandomValues(new Uint8Array(32)));
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
   return { codeVerifier, codeChallenge: base64Url(new Uint8Array(digest)) };
 }
 
+/** URL that sends the user to Kick to approve your app. */
 export function getAuthorizationUrl({ clientId, redirectUri, scopes, state, codeChallenge, oauthUrl = OAUTH_URL }: AuthorizationRequest): string {
   const url = new URL('/oauth/authorize', oauthUrl);
   url.search = new URLSearchParams({
@@ -80,6 +82,7 @@ export function getAuthorizationUrl({ clientId, redirectUri, scopes, state, code
   return url.toString();
 }
 
+/** Gets an app access token with the client credentials grant. */
 export function getAppToken(credentials: OAuthCredentials): Promise<AppToken> {
   return postForm(credentials, '/oauth/token', {
     grant_type: 'client_credentials',
@@ -88,6 +91,7 @@ export function getAppToken(credentials: OAuthCredentials): Promise<AppToken> {
   });
 }
 
+/** Exchanges the authorization code from the redirect for a user token. */
 export function exchangeCode(credentials: OAuthCredentials, { code, redirectUri, codeVerifier }: { code: string; redirectUri: string; codeVerifier: string }): Promise<UserToken> {
   return postForm(credentials, '/oauth/token', {
     grant_type: 'authorization_code',
@@ -99,6 +103,7 @@ export function exchangeCode(credentials: OAuthCredentials, { code, redirectUri,
   });
 }
 
+/** Gets a new user token with a refresh token. */
 export function refreshUserToken(credentials: OAuthCredentials, refreshToken: string): Promise<UserToken> {
   return postForm(credentials, '/oauth/token', {
     grant_type: 'refresh_token',
@@ -108,6 +113,7 @@ export function refreshUserToken(credentials: OAuthCredentials, refreshToken: st
   });
 }
 
+/** Revokes an access or refresh token. */
 export async function revokeToken(options: Partial<OAuthCredentials>, token: string, tokenHintType?: 'access_token' | 'refresh_token'): Promise<void> {
   await postForm(options, '/oauth/revoke', { token, ...(tokenHintType && { token_hint_type: tokenHintType }) });
 }

@@ -1,0 +1,11 @@
+name: Feature request
+description: A new endpoint, option or helper
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you like to do?
+      description: Describe the use case. Link the Kick docs page if it is about an endpoint.
+    validations:
+      required: true

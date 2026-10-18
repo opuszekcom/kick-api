@@ -1,12 +1,17 @@
 # @opuszek/kick-api
 
+[![npm](https://img.shields.io/npm/v/@opuszek/kick-api)](https://www.npmjs.com/package/@opuszek/kick-api)
+[![CI](https://github.com/opuszek/kick-api/actions/workflows/ci.yml/badge.svg)](https://github.com/opuszek/kick-api/actions/workflows/ci.yml)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@opuszek/kick-api)](https://bundlephobia.com/package/@opuszek/kick-api)
+[![license](https://img.shields.io/npm/l/@opuszek/kick-api)](LICENSE)
+
 Typed, zero-dependency client for the official [Kick.com public API](https://docs.kick.com).
 
 - App access tokens are fetched and refreshed for you
-- Channels, users, livestreams, categories and event subscriptions
+- The whole public API: channels, users, livestreams, categories, chat, moderation, channel point rewards, KICKs, ads and event subscriptions
 - Webhook signature verification and typed event payloads
 - OAuth 2.1 helpers with PKCE for user tokens
-- Long ID lists are split into batches, cursor pages can be iterated, `429` responses are retried
+- Long ID lists are split into batches, cursor pages can be iterated, rate limits and temporary Kick errors are retried, requests time out
 - Works in Node.js 20.19+, Bun, Deno and Cloudflare Workers (uses `fetch` and Web Crypto only)
 
 Built and used in production by [Opuszek](https://opuszek.com), a Discord bot for stream notifications.
@@ -69,6 +74,40 @@ await kick.users.get([123456]);
 
 await kick.categories.list({ names: ['Counter-Strike 2'] });
 await kick.categories.get(1552);
+```
+
+### Chat and moderation
+
+These need a user token (see [User tokens](#user-tokens-oauth-21-with-pkce)).
+
+```ts
+const sent = await kick.chat.send({ type: 'user', broadcaster_user_id: 123456, content: 'Hello chat!' });
+await kick.chat.send({ type: 'bot', content: 'Reply', reply_to_message_id: sent.message_id });
+await kick.chat.delete(sent.message_id);
+
+await kick.moderation.ban({ broadcaster_user_id: 123456, user_id: 345678, duration: 10, reason: 'Spam' });
+await kick.moderation.unban({ broadcaster_user_id: 123456, user_id: 345678 });
+```
+
+### Channel point rewards, KICKs and ads
+
+```ts
+const reward = await kick.rewards.create({ title: 'Hydrate!', cost: 500 });
+await kick.rewards.update(reward.id, { is_paused: true });
+
+const { data } = await kick.rewards.redemptions({ status: 'pending' });
+const failed = await kick.rewards.accept(data.flatMap(({ redemptions }) => redemptions.map(({ id }) => id)));
+
+await kick.kicks.leaderboard(10);
+
+await kick.ads.status();
+await kick.ads.startBreak(60);
+```
+
+### Any other endpoint
+
+```ts
+const response = await kick.request('GET', '/public/v1/livestreams/stats');
 ```
 
 ### Event subscriptions (webhooks)
@@ -170,10 +209,17 @@ try {
 | `clientId`     | Your Kick app client ID, used for app access tokens                |
 | `clientSecret` | Your Kick app client secret                                        |
 | `userToken`    | A user access token, or a function returning one                   |
-| `maxRetries`   | How many times to retry a rate-limited (`429`) request, default 2 |
+| `maxRetries`   | Retries for rate limits and temporary Kick errors, default 2      |
+| `timeoutMs`    | Request timeout in milliseconds, default 15000                     |
 | `fetch`        | Custom `fetch` implementation                                      |
 | `apiUrl`       | Override the API base URL, default `https://api.kick.com`          |
 | `oauthUrl`     | Override the OAuth base URL, default `https://id.kick.com`         |
+
+## Examples
+
+See [`examples/`](examples) for a webhook server, a Cloudflare Worker and a Discord live alert.
+
+Write requests such as `chat.send` are never repeated after a dropped connection, so a message cannot be posted twice.
 
 ## License
 

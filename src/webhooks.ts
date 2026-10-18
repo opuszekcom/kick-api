@@ -16,6 +16,7 @@ const DEFAULT_MAX_AGE_MS = 10 * 60 * 1000;
 const KEY_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 const PEM_PATTERN = /-----BEGIN PUBLIC KEY-----([\s\S]+?)-----END PUBLIC KEY-----/;
 
+/** Reads a header from a Headers object or a plain object, ignoring case. */
 export function readHeader(headers: WebhookHeaders, name: string): string | undefined {
   if (typeof (headers as Headers).get === 'function') return (headers as Headers).get(name) ?? undefined;
 
@@ -53,6 +54,7 @@ function importPublicKey(pem: string): Promise<CryptoKey> {
   return key;
 }
 
+/** Checks the Kick signature and message age of a webhook. Pass the raw, unparsed body. */
 export async function verifyWebhookSignature({ headers, body, publicKey, maxAgeMs = DEFAULT_MAX_AGE_MS, now = Date.now() }: VerifyOptions): Promise<boolean> {
   const messageId = readHeader(headers, 'kick-event-message-id');
   const timestamp = readHeader(headers, 'kick-event-message-timestamp');
@@ -75,6 +77,7 @@ export async function verifyWebhookSignature({ headers, body, publicKey, maxAgeM
   }
 }
 
+/** Turns webhook headers and body into a typed event. Does not verify the signature. */
 export function parseWebhookEvent(headers: WebhookHeaders, body: WebhookBody): KickWebhookEvent {
   const type = readHeader(headers, 'kick-event-type');
   if (!type) throw new TypeError('Missing Kick-Event-Type header');
@@ -95,6 +98,7 @@ export interface WebhookVerifierOptions {
   maxAgeMs?: number;
 }
 
+/** Verifies webhooks with Kick's public key, fetched and cached automatically. */
 export class WebhookVerifier {
   private readonly options: WebhookVerifierOptions;
   private publicKey: Promise<string> | null = null;
@@ -104,6 +108,7 @@ export class WebhookVerifier {
     this.options = options;
   }
 
+  /** Returns the typed event when the webhook is genuine, otherwise null. */
   async verify(headers: WebhookHeaders, body: WebhookBody): Promise<KickWebhookEvent | null> {
     const { maxAgeMs } = this.options;
     if (await verifyWebhookSignature({ headers, body, publicKey: await this.getPublicKey(), maxAgeMs })) return parseWebhookEvent(headers, body);

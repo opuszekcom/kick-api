@@ -1,3 +1,4 @@
+/** Error response from the Kick API, with the HTTP status and response body. */
 export class KickApiError extends Error {
   readonly status: number;
   readonly method: string;
@@ -14,6 +15,7 @@ export class KickApiError extends Error {
   }
 }
 
+/** Error response from the Kick OAuth server. */
 export class KickAuthError extends Error {
   readonly status: number;
   readonly body: unknown;

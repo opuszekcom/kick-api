@@ -7,6 +7,21 @@ export interface KickPaginatedResponse<T> extends KickResponse<T> {
   pagination: { next_cursor: string };
 }
 
+export type KickScope =
+  | 'user:read'
+  | 'channel:read'
+  | 'channel:write'
+  | 'channel:rewards:read'
+  | 'channel:rewards:write'
+  | 'chat:write'
+  | 'streamkey:read'
+  | 'events:subscribe'
+  | 'moderation:ban'
+  | 'moderation:chat_message:manage'
+  | 'kicks:read'
+  | 'ads:read'
+  | 'ads:write';
+
 export interface Category {
   id: number;
   name: string;
@@ -75,6 +90,94 @@ export interface Livestream {
 
 export interface LivestreamStats {
   total_count: number;
+}
+
+export interface ChatMessage {
+  content: string;
+  type: 'user' | 'bot';
+  broadcaster_user_id?: number;
+  reply_to_message_id?: string;
+}
+
+export interface SentChatMessage {
+  is_sent: boolean;
+  message_id: string;
+}
+
+export interface Ban {
+  broadcaster_user_id: number;
+  user_id: number;
+  duration?: number;
+  reason?: string;
+}
+
+export interface ChannelReward {
+  id: string;
+  title: string;
+  description: string;
+  cost: number;
+  background_color: string;
+  is_enabled: boolean;
+  is_paused: boolean;
+  is_user_input_required: boolean;
+  should_redemptions_skip_request_queue: boolean;
+}
+
+export interface ChannelRewardInput {
+  title: string;
+  cost: number;
+  description?: string;
+  background_color?: string;
+  is_enabled?: boolean;
+  is_user_input_required?: boolean;
+  should_redemptions_skip_request_queue?: boolean;
+}
+
+export type ChannelRewardUpdate = Partial<ChannelRewardInput> & { is_paused?: boolean };
+
+export type RedemptionStatus = 'pending' | 'accepted' | 'rejected';
+
+export interface RewardRedemptions {
+  reward: { id: string; title: string; description?: string; cost?: number; can_manage?: boolean; is_deleted?: boolean };
+  redemptions: Array<{
+    id: string;
+    redeemed_at: string;
+    redeemer: { user_id: number };
+    status: RedemptionStatus;
+    user_input: string;
+  }>;
+}
+
+export interface RedemptionFailure {
+  id: string;
+  reason: 'UNKNOWN' | 'NOT_PENDING' | 'NOT_FOUND' | 'NOT_OWNED';
+}
+
+export interface KicksLeaderboardEntry {
+  gifted_amount: number;
+  rank: number;
+  user_id: number;
+  username: string;
+}
+
+export interface KicksLeaderboard {
+  lifetime: KicksLeaderboardEntry[];
+  month: KicksLeaderboardEntry[];
+  week: KicksLeaderboardEntry[];
+}
+
+export interface AdBreak {
+  id: string;
+  remaining_ad_breaks: number;
+}
+
+export interface AdBreakStatus {
+  ad_breaks: Array<{ id: string; break_duration_seconds: number; created_at: string; source: string; status: string }>;
+  ads_blocked: boolean;
+  auto_ads_active: boolean;
+  limits: { max: number; period_seconds: number };
+  opted_in: boolean;
+  remaining_ad_breaks: number;
 }
 
 export interface EventSubscription {

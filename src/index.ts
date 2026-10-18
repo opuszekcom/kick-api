@@ -1,5 +1,5 @@
 export { API_URL, KickClient } from './client.js';
-export type { CategoryQuery, KickClientOptions, LivestreamQuery, Page } from './client.js';
+export type { CategoryQuery, KickClientOptions, LivestreamQuery, Page, RedemptionQuery } from './client.js';
 export { KickApiError, KickAuthError } from './errors.js';
 export { OAUTH_URL, createPkce, exchangeCode, getAppToken, getAuthorizationUrl, refreshUserToken, revokeToken } from './oauth.js';
 export type { AppToken, AuthorizationRequest, OAuthCredentials, Pkce, UserToken } from './oauth.js';
