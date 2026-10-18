@@ -1,0 +1,49 @@
+{
+  "name": "@opuszek/kick-api",
+  "version": "0.1.0",
+  "description": "Typed, zero-dependency client for the official Kick.com public API: channels, livestreams, categories, event subscriptions, OAuth and webhook verification.",
+  "keywords": [
+    "kick",
+    "kick.com",
+    "kick-api",
+    "streaming",
+    "webhooks",
+    "oauth",
+    "typescript"
+  ],
+  "homepage": "https://github.com/opuszek/kick-api#readme",
+  "bugs": "https://github.com/opuszek/kick-api/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opuszek/kick-api.git"
+  },
+  "license": "MIT",
+  "author": "Opuszek <contact@opuszek.com> (https://opuszek.com)",
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  }
+}
